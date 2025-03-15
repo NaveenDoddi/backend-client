@@ -80,7 +80,6 @@ app.get('/api/inc-city/:state/:city?/:place', async (req, res) => {
 
     }
 
-
     var inc_city_map_weather_arr = []
 
     try {
