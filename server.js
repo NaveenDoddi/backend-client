@@ -1,10 +1,10 @@
 const express = require('express');
 const axios = require('axios');
+// const puppeteer = require("puppeteer");
 const cheerio = require('cheerio');
 const cors = require('cors');
 
 const app = express();
-
 // Enable CORS
 app.use(cors());
 
@@ -79,8 +79,18 @@ app.get('/api/inc-city/:state/:city?/:place', async (req, res) => {
 
     }
 
-    var inc_city_map_weather_arr = []
 
+    var inc_city_map_weather_arr = []
+    try {
+      let today = $('div#airport').text()
+      console.log(today)
+      // inc_city_map_weather_arr.push(
+      //   { ['today']:today }
+      // );
+
+    } catch {
+
+    }
     try {
       $('div.inc-monthly__content').each((index, element) => {
         const paragraphText = $(element).find('p').text();
@@ -102,15 +112,37 @@ app.get('/api/inc-city/:state/:city?/:place', async (req, res) => {
       );
 
     });
+
+    let inc_hidden_content_paras_arr = []
+
     try {
       $('div.inc-container__content').each((index, element) => {
+
         $(element).find('h4').each((h4Index, h4Element) => {
           const headingText = $(h4Element).text();
           const paragraphText = $(element).find('p').eq(h4Index).text();
-          inc_content_paras_arr.push({ [headingText]: paragraphText });
+          inc_hidden_content_paras_arr.push({ [headingText]: paragraphText });
         });
+
       });
 
+    } catch {
+
+    }
+    try {
+      $('div.inc-city-content').each((index, element) => {
+        $(element).find('h4').each((h4Index, h4Element) => {
+          const headingText = $(h4Element).text();
+          const paragraphText = $(element).find('p').eq(h4Index).text();
+          inc_hidden_content_paras_arr.push({ [headingText]: paragraphText });
+        });
+        let images = []
+        $(element).find('img').each((index, image) => {
+          let imageSrc = $(image).attr('src')
+          images.push(imageSrc);
+        })
+        inc_hidden_content_paras_arr.push({ ['images']: images })
+      });
     } catch {
 
     }
@@ -155,6 +187,7 @@ app.get('/api/inc-city/:state/:city?/:place', async (req, res) => {
       'city_map': JSON.parse(inc_city_map[0]),
       'weather': inc_city_map_weather_arr,
       'content': inc_content_paras_arr,
+      'hiddenContent': inc_hidden_content_paras_arr,
       'experiences': inc_city_experiences,
       'nearby': inc_city_nearby
     }
@@ -203,12 +236,14 @@ app.get("/api/search/:place", async (req, res) => {
 
 
 
-// Start the server
-const PORT = 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// // Start the server
+// const PORT = 5000;
+// app.listen(PORT, () => {
+//   console.log(`Server running on http://localhost:${PORT}`);
+// });
 
 app.get("/", (req, res) => {
-  res.send("Hello from local server!");
+  res.send("Hello from Vercel!");
 });
+
+module.exports = app;
