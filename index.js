@@ -82,7 +82,16 @@ app.get('/api/inc-city/:state/:city?/:place', async (req, res) => {
 
 
     var inc_city_map_weather_arr = []
+    try {
+      let today = $('div#airport').text()
+      console.log(today) 
+      // inc_city_map_weather_arr.push(
+      //   { ['today']:today }
+      // );
 
+    } catch {
+
+    }
     try {
       $('div.inc-monthly__content').each((index, element) => {
         const paragraphText = $(element).find('p').text();
@@ -104,15 +113,36 @@ app.get('/api/inc-city/:state/:city?/:place', async (req, res) => {
       );
 
     });
+
     try {
       $('div.inc-container__content').each((index, element) => {
+
         $(element).find('h4').each((h4Index, h4Element) => {
           const headingText = $(h4Element).text();
           const paragraphText = $(element).find('p').eq(h4Index).text();
           inc_content_paras_arr.push({ [headingText]: paragraphText });
         });
+
       });
 
+    } catch {
+
+    }
+    try {
+      $('div.inc-city-content').each((index, element) => {
+
+
+        $(element).find('h4').each((h4Index, h4Element) => {
+          const headingText = $(h4Element).text();
+          const paragraphText = $(element).find('p').eq(h4Index).text();
+          inc_content_paras_arr.push({ [headingText]: paragraphText });
+        });
+
+        $(element).find('img').each((index, image) => {
+          let imageSrc = $(image).attr('src')
+          inc_content_paras_arr.push({ [`image${index}`]: imageSrc });
+        })
+      });
     } catch {
 
     }
